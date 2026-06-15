@@ -50,7 +50,7 @@ async function Start() {
     obfuscationMaps = generateMaps();
   }
 
-  const port = INConfig.server?.port || 8080;
+  const port = Number(process.env.PORT) || INConfig.server?.port || 8080;
 
   const app = Fastify({
     serverFactory: (handler) => createServer(handler).on("upgrade", (req, socket: Socket, head) => (req.url?.startsWith("/f") ? wisp.routeRequest(req, socket, head) : socket.destroy())),
@@ -476,7 +476,7 @@ self.addEventListener("fetch", (event) => {
   } else {
     app.use(handler);
   }
-  app.listen({ port }, (err, addr) => {
+  app.listen({ port, host: "0.0.0.0" }, (err, addr) => {
     if (err) {
       console.error("Server failed to start:", err);
       process.exit(1);
